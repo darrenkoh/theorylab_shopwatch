@@ -1,0 +1,11 @@
+{
+    "merchants": [
+        {
+            "name": "bhphoto",
+            "xpath": {
+                "img": "//*[@id=\"bh-app\"]/section/div/div[2]/div[4]/div/div[1]/div[1]/div/div[2]/a/img",
+                "price": "//*[@id=\"bh-app\"]/section/div/div[2]/div[4]/div/div[2]/div/div/div[3]/div/div/div"
+            }
+        }
+    ]
+}
