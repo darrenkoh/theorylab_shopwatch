@@ -19,20 +19,22 @@ type Config struct {
 	Merchants []struct {
 		Name  string `json:"name"`
 		Xpath struct {
-			Img       string `json:"img"`
-			Available string `json:"available"`
-			Price     string `json:"price"`
+			ProductName string `json:"productname"`
+			Img         string `json:"img"`
+			Available   string `json:"available"`
+			Price       string `json:"price"`
 		} `json:"xpath"`
 	} `json:"merchants"`
 }
 
 // Product Structure
 type Product struct {
+	Name      string
 	Img       []byte
 	Available string
 	Price     float64
 	Currency  string
-	HtmlBody  string
+	HTMLBody  string
 }
 
 var config Config
@@ -106,6 +108,8 @@ func GetProductInfo(url string) (info *Product, err error) {
 	defer response.Body.Close()
 	data, err := ioutil.ReadAll(response.Body)
 
+	product.HTMLBody = string(data)
+
 	if err != nil {
 		return nil, err
 	}
@@ -116,6 +120,16 @@ func GetProductInfo(url string) (info *Product, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Product Name
+	prodName, err := htmlquery.Query(doc, config.Merchants[0].Xpath.ProductName)
+	if err != nil {
+		fmt.Printf("Invalid Xpath: %v", err)
+		return nil, err
+	}
+	product.Name = prodName.FirstChild.Data
+	print("Product Name: ")
+	println(product.Name)
 
 	// Download the Image
 	node, err := htmlquery.Query(doc, config.Merchants[0].Xpath.Img)
@@ -147,6 +161,7 @@ func GetProductInfo(url string) (info *Product, err error) {
 	}
 	if price != nil {
 		product.Price = getPrice(price.FirstChild.Data)
+		product.Currency = "USD"
 		fmt.Printf("Price: %v", product.Price)
 	} else {
 		product.Price = -1

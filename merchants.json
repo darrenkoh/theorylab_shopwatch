@@ -3,9 +3,19 @@
         {
             "name": "bhphoto",
             "xpath": {
+                "productname": "//h1[@data-selenium='productTitle']",
                 "img": "//img[@data-selenium='inlineMediaMainImage']",
                 "available": "//span[@data-selenium='stockStatus']",
                 "price": "//div[@data-selenium='pricingPrice']"
+            }
+        },
+        {
+            "name": "bestbuy",
+            "xpath": {
+                "productname": "",
+                "img": "",
+                "available": "",
+                "price": ""
             }
         }
     ]
