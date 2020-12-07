@@ -17,6 +17,51 @@
                 "available": "",
                 "price": ""
             }
+        },
+        {
+            "name": "walmart",
+            "xpath": {
+                "productname": "",
+                "img": "",
+                "available": "",
+                "price": ""
+            }
+        },
+        {
+            "name": "amazon",
+            "xpath": {
+                "productname": "",
+                "img": "",
+                "available": "",
+                "price": ""
+            }
+        },
+        {
+            "name": "newegg",
+            "xpath": {
+                "productname": "",
+                "img": "",
+                "available": "",
+                "price": ""
+            }
+        },
+        {
+            "name": "adorama",
+            "xpath": {
+                "productname": "",
+                "img": "",
+                "available": "",
+                "price": ""
+            }
+        },
+        {
+            "name": "etsy",
+            "xpath": {
+                "productname": "",
+                "img": "",
+                "available": "",
+                "price": ""
+            }
         }
     ]
 }
