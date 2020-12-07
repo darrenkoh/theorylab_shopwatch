@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/antchfx/htmlquery"
 	"golang.org/x/net/html"
@@ -89,7 +90,7 @@ func getImg(url string) (img []byte, err error) {
 func getPrice(price string) float64 {
 	prc := regexp.MustCompile("[$]").Split(price, 2)
 	if prc != nil {
-		f, _ := strconv.ParseFloat(prc[1], 64)
+		f, _ := strconv.ParseFloat(strings.Replace(prc[1], ",", "", -1), 64)
 		return f
 	}
 	return -1
