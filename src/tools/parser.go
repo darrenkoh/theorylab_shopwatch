@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/antchfx/htmlquery"
 	"golang.org/x/net/html"
@@ -100,8 +101,26 @@ func getPrice(price string) float64 {
 
 // GetProductInfo load url and return Product
 func GetProductInfo(url string) (info *Product, err error) {
+
+	// Detect Merchan
+	merchantConfig := config.Merchants[0]
+	for _, m := range config.Merchants {
+		if strings.Contains(url, m.Name) {
+			merchantConfig = m
+			break
+		}
+	}
+
 	var product Product
-	response, err := http.Get(url)
+	//response, err := http.Get(url)
+
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", "PostmanRuntime/7.26.5")
+	response, err := client.Do(req)
+
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +133,7 @@ func GetProductInfo(url string) (info *Product, err error) {
 		return nil, err
 	}
 	/* Write to temp for testing */
-	//ioutil.WriteFile("test2.html", data, 0644)
+	ioutil.WriteFile("test.html", data, 0644)
 	docReader := bytes.NewReader(data)
 	doc, err := htmlquery.Parse(docReader)
 	if err != nil {
@@ -122,7 +141,7 @@ func GetProductInfo(url string) (info *Product, err error) {
 	}
 
 	// Product Name
-	prodName, err := htmlquery.Query(doc, config.Merchants[0].Xpath.ProductName)
+	prodName, err := htmlquery.Query(doc, merchantConfig.Xpath.ProductName)
 	if err != nil {
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
@@ -132,7 +151,7 @@ func GetProductInfo(url string) (info *Product, err error) {
 	println(product.Name)
 
 	// Download the Image
-	node, err := htmlquery.Query(doc, config.Merchants[0].Xpath.Img)
+	node, err := htmlquery.Query(doc, merchantConfig.Xpath.Img)
 	if err != nil {
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
@@ -142,10 +161,10 @@ func GetProductInfo(url string) (info *Product, err error) {
 	product.Img = img
 
 	/* Write to file for testing */
-	//ioutil.WriteFile("a.jpg", img, 0644)
+	ioutil.WriteFile("a.jpg", img, 0644)
 
 	// Stock Available
-	stock, err := htmlquery.Query(doc, config.Merchants[0].Xpath.Available)
+	stock, err := htmlquery.Query(doc, merchantConfig.Xpath.Available)
 	if err != nil {
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
@@ -155,7 +174,7 @@ func GetProductInfo(url string) (info *Product, err error) {
 	println(stock.FirstChild.Data)
 
 	// Get the price
-	price, err := htmlquery.Query(doc, config.Merchants[0].Xpath.Price)
+	price, err := htmlquery.Query(doc, merchantConfig.Xpath.Price)
 	if err != nil {
 		fmt.Printf("Invalid Xpath: %v", err)
 	}

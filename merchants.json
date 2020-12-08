@@ -12,9 +12,9 @@
         {
             "name": "bestbuy",
             "xpath": {
-                "productname": "",
-                "img": "",
-                "available": "",
+                "productname": "//div[@class='sku-title']/h1",
+                "img": "//img[@class='primary-image']",
+                "available": "//div[@class='fulfillment-add-to-cart-button']/div/div/button/text()='Add to Cart'",
                 "price": ""
             }
         },
