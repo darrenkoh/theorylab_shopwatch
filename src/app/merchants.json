@@ -1,22 +1,26 @@
 {
-    "merchants": [
+    "merchant": [
         {
             "name": "bhphoto",
             "xpath": {
-                "productname": "//h1[@data-selenium='productTitle']",
+                "productname": "//h1[@data-selenium='productTitle']/text()",
                 "img": "//img[@data-selenium='inlineMediaMainImage']",
-                "available": "//span[@data-selenium='stockStatus']",
-                "price": "//div[@data-selenium='pricingPrice']"
+                "available": "//span[@data-selenium='stockStatus']/text()",
+                "price": ["//div[@data-selenium='pricingPrice']/text()"]
             }
         },
         {
             "name": "bestbuy",
             "xpath": {
-                "productname": "//div[@class='sku-title']/h1",
+                "productname": "//div[@class='sku-title']/h1/text()",
                 "img": "//img[@class='primary-image']",
-                "available": "//div[@class='fulfillment-add-to-cart-button']/div/div/button/text()='Add to Cart'",
-                "price": ""
-            }
+                "available": "//div[@class='fulfillment-add-to-cart-button']/div/div/button/text()",
+                "price": [
+                    "//div[@class='priceView-hero-price priceView-customer-price']/span/text()",
+                    "//button[@class='activated-pricing__button ']/span[@class='activated-pricing__option-price']/span/text()"
+                ]
+            },
+            "availablekeyword": "add to cart"
         },
         {
             "name": "walmart",
@@ -24,7 +28,7 @@
                 "productname": "",
                 "img": "",
                 "available": "",
-                "price": ""
+                "price": []
             }
         },
         {
@@ -33,7 +37,7 @@
                 "productname": "",
                 "img": "",
                 "available": "",
-                "price": ""
+                "price": []
             }
         },
         {
@@ -42,7 +46,7 @@
                 "productname": "",
                 "img": "",
                 "available": "",
-                "price": ""
+                "price": []
             }
         },
         {
@@ -51,7 +55,7 @@
                 "productname": "",
                 "img": "",
                 "available": "",
-                "price": ""
+                "price": []
             }
         },
         {
@@ -60,7 +64,7 @@
                 "productname": "",
                 "img": "",
                 "available": "",
-                "price": ""
+                "price": []
             }
         }
     ]

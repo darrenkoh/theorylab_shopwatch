@@ -17,15 +17,22 @@ import (
 
 // Config Structure
 type Config struct {
-	Merchants []struct {
-		Name  string `json:"name"`
-		Xpath struct {
-			ProductName string `json:"productname"`
-			Img         string `json:"img"`
-			Available   string `json:"available"`
-			Price       string `json:"price"`
-		} `json:"xpath"`
-	} `json:"merchants"`
+	Merchants []Merchant `json:"merchant"`
+}
+
+// Xpath Structure
+type Xpath struct {
+	ProductName string   `json:"productname"`
+	Img         string   `json:"img"`
+	Available   string   `json:"available"`
+	Price       []string `json:"price"`
+}
+
+// Merchant Structure
+type Merchant struct {
+	Name             string `json:"name"`
+	Xpath            Xpath  `json:"xpath"`
+	AvailableKeyword string `json:"availablekeyword,omitempty"`
 }
 
 // Product Structure
@@ -33,16 +40,15 @@ type Product struct {
 	Name      string
 	Img       []byte
 	Available string
-	Price     float64
+	Price     []float64
 	Currency  string
 	HTMLBody  string
 }
 
 var config Config
 
-func init() {
-	merchantJSON, err := ioutil.ReadFile("merchants.json")
-	err = json.Unmarshal(merchantJSON, &config)
+func loadConfig(data []byte) {
+	err := json.Unmarshal(data, &config)
 	if err != nil {
 		fmt.Printf("Unable to load merchants.json: %v", err)
 	}
@@ -99,6 +105,13 @@ func getPrice(price string) float64 {
 	return -1
 }
 
+func getAvailability(available string, config Merchant) string {
+	if strings.Contains(strings.ToLower(available), strings.ToLower(config.AvailableKeyword)) {
+		return "Yes"
+	}
+	return "No"
+}
+
 // GetProductInfo load url and return Product
 func GetProductInfo(url string) (info *Product, err error) {
 
@@ -112,7 +125,6 @@ func GetProductInfo(url string) (info *Product, err error) {
 	}
 
 	var product Product
-	//response, err := http.Get(url)
 
 	client := &http.Client{
 		Timeout: 5 * time.Second,
@@ -133,7 +145,7 @@ func GetProductInfo(url string) (info *Product, err error) {
 		return nil, err
 	}
 	/* Write to temp for testing */
-	ioutil.WriteFile("test.html", data, 0644)
+	//ioutil.WriteFile("test.html", data, 0644)
 	docReader := bytes.NewReader(data)
 	doc, err := htmlquery.Parse(docReader)
 	if err != nil {
@@ -146,9 +158,7 @@ func GetProductInfo(url string) (info *Product, err error) {
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
 	}
-	product.Name = prodName.FirstChild.Data
-	print("Product Name: ")
-	println(product.Name)
+	product.Name = prodName.Data
 
 	// Download the Image
 	node, err := htmlquery.Query(doc, merchantConfig.Xpath.Img)
@@ -160,31 +170,27 @@ func GetProductInfo(url string) (info *Product, err error) {
 	img, err := getImg(imgURL)
 	product.Img = img
 
-	/* Write to file for testing */
-	ioutil.WriteFile("a.jpg", img, 0644)
-
 	// Stock Available
+	product.Available = "Yes"
 	stock, err := htmlquery.Query(doc, merchantConfig.Xpath.Available)
 	if err != nil {
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
 	}
-	product.Available = stock.FirstChild.Data
-	print("Stock Status: ")
-	println(stock.FirstChild.Data)
+	if stock != nil {
+		product.Available = getAvailability(stock.Data, merchantConfig)
+	}
 
 	// Get the price
-	price, err := htmlquery.Query(doc, merchantConfig.Xpath.Price)
-	if err != nil {
-		fmt.Printf("Invalid Xpath: %v", err)
-	}
-	if price != nil {
-		product.Price = getPrice(price.FirstChild.Data)
-		product.Currency = "USD"
-		fmt.Printf("Price: %v", product.Price)
-	} else {
-		product.Price = -1
-		println("NA")
+	// 1.0 collect all prices
+	product.Currency = "USD"
+	for _, xpath := range merchantConfig.Xpath.Price {
+		price, err := htmlquery.Query(doc, xpath)
+		if err != nil {
+			fmt.Printf("Invalid Xpath: %v", err)
+		} else if price != nil {
+			product.Price = append(product.Price, getPrice(price.Data))
+		}
 	}
 
 	return &product, nil
