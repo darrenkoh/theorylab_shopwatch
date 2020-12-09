@@ -47,7 +47,8 @@ type Product struct {
 
 var config Config
 
-func loadConfig(data []byte) {
+// LoadConfig Load Merchant Configuration
+func LoadConfig(data []byte) {
 	err := json.Unmarshal(data, &config)
 	if err != nil {
 		fmt.Printf("Unable to load merchants.json: %v", err)
@@ -99,7 +100,11 @@ func getImg(url string) (img []byte, err error) {
 func getPrice(price string) float64 {
 	prc := regexp.MustCompile("[$]").Split(price, 2)
 	if prc != nil {
-		f, _ := strconv.ParseFloat(strings.Replace(prc[1], ",", "", -1), 64)
+		idx := 1
+		if len(prc) == 1 {
+			idx = 0
+		}
+		f, _ := strconv.ParseFloat(strings.Replace(prc[idx], ",", "", -1), 64)
 		return f
 	}
 	return -1
@@ -127,7 +132,7 @@ func GetProductInfo(url string) (info *Product, err error) {
 	var product Product
 
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 30 * time.Second,
 	}
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", "PostmanRuntime/7.26.5")
