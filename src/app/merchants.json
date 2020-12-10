@@ -4,7 +4,9 @@
             "name": "bhphoto",
             "xpath": {
                 "productname": "//h1[@data-selenium='productTitle']/text()",
-                "img": "//img[@data-selenium='inlineMediaMainImage']",
+                "img": {
+                    "path": "//img[@data-selenium='inlineMediaMainImage']"
+                },
                 "available": "//span[@data-selenium='stockStatus']/text()",
                 "price": ["//div[@data-selenium='pricingPrice']/text()"]
             },
@@ -14,7 +16,9 @@
             "name": "bestbuy",
             "xpath": {
                 "productname": "//div[@class='sku-title']/h1/text()",
-                "img": "//img[@class='primary-image']",
+                "img": {
+                    "path": "//img[@class='primary-image']"
+                },
                 "available": "//div[@class='fulfillment-add-to-cart-button']/div/div/button/text()",
                 "price": [
                     "//div[@class='priceView-hero-price priceView-customer-price']/span/text()",
@@ -27,7 +31,10 @@
             "name": "walmart",
             "xpath": {
                 "productname": "//h1[@class='prod-ProductTitle prod-productTitle-buyBox font-bold']/text()",
-                "img": "//img[@class='hover-zoom-hero-image']",
+                "img": {
+                    "path": "//img[@class='hover-zoom-hero-image']",
+                    "transformeval": "\"https://\" + trim(split(s, \"?\")[0], \"/\")" 
+                },
                 "available": "//span[@class='spin-button-children']",
                 "price": ["//span[@class='price-characteristic']/text()"]
             },
@@ -37,7 +44,7 @@
             "name": "amazon",
             "xpath": {
                 "productname": "",
-                "img": "",
+                "img": {},
                 "available": "",
                 "price": []
             }
@@ -46,7 +53,7 @@
             "name": "newegg",
             "xpath": {
                 "productname": "",
-                "img": "",
+                "img": {},
                 "available": "",
                 "price": []
             }
@@ -55,7 +62,7 @@
             "name": "adorama",
             "xpath": {
                 "productname": "",
-                "img": "",
+                "img": {},
                 "available": "",
                 "price": []
             }
@@ -64,7 +71,7 @@
             "name": "etsy",
             "xpath": {
                 "productname": "",
-                "img": "",
+                "img": {},
                 "available": "",
                 "price": []
             }

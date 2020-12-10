@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/antchfx/htmlquery"
+	"github.com/antonmedv/expr"
 	"golang.org/x/net/html"
 )
 
@@ -20,10 +21,16 @@ type Config struct {
 	Merchants []Merchant `json:"merchant"`
 }
 
+// Img Structure
+type Img struct {
+	Path          string `json:"path"`
+	Transformeval string `json:"transformeval"`
+}
+
 // Xpath Structure
 type Xpath struct {
 	ProductName string   `json:"productname"`
-	Img         string   `json:"img"`
+	Img         Img      `json:"img"`
 	Available   string   `json:"available"`
 	Price       []string `json:"price"`
 }
@@ -85,7 +92,29 @@ func getAttr(key string, attrs []html.Attribute) string {
 	return ""
 }
 
-func getImg(url string) (img []byte, err error) {
+func getImg(url string, transformeval string) (img []byte, err error) {
+
+	// We might need to transform the source URL
+	if len(transformeval) > 0 {
+		env := map[string]interface{}{
+			"s":     url,
+			"trim":  strings.Trim,
+			"split": strings.Split,
+		}
+
+		program, err := expr.Compile(transformeval, expr.Env(env))
+		if err != nil {
+			return nil, fmt.Errorf("GET Img Error: %v", err)
+		}
+
+		output, err := expr.Run(program, env)
+		if err != nil {
+			return nil, fmt.Errorf("GET Img Error: %v", err)
+		}
+
+		url = output.(string)
+	}
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("GET Error: %v", err)
@@ -166,13 +195,13 @@ func GetProductInfo(url string) (info *Product, err error) {
 	product.Name = prodName.Data
 
 	// Download the Image
-	node, err := htmlquery.Query(doc, merchantConfig.Xpath.Img)
+	node, err := htmlquery.Query(doc, merchantConfig.Xpath.Img.Path)
 	if err != nil {
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
 	}
 	imgURL := getAttr("src", node.Attr)
-	img, err := getImg(imgURL)
+	img, err := getImg(imgURL, merchantConfig.Xpath.Img.Transformeval)
 	product.Img = img
 
 	// Stock Available
