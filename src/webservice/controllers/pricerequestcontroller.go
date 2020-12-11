@@ -10,6 +10,7 @@ import (
 	"theorylab.com/shopwatch/src/webservice/models"
 )
 
+// PriceRequestController structure
 type PriceRequestController struct {
 	priceRequestPattern *regexp.Regexp
 }
@@ -24,15 +25,15 @@ func (pr PriceRequestController) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	if r.URL.Path == "/pricerequests" {
 		switch r.Method {
 		case http.MethodPost:
-			pr.ProcessRequest(w, r)
+			pr.processRequest(w, r)
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 		}
 	}
 }
 
-func (pr *PriceRequestController) ProcessRequest(w http.ResponseWriter, r *http.Request) {
-	p, err := pr.ParsePriceRequest(r)
+func (pr *PriceRequestController) processRequest(w http.ResponseWriter, r *http.Request) {
+	p, err := pr.parsePriceRequest(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Could not parse Price Request object"))
@@ -86,7 +87,7 @@ func (pr *PriceRequestController) ProcessRequest(w http.ResponseWriter, r *http.
 	encodeResponseAsJSON(p, w)
 }
 
-func (pr *PriceRequestController) ParsePriceRequest(r *http.Request) (models.PriceRequest, error) {
+func (pr *PriceRequestController) parsePriceRequest(r *http.Request) (models.PriceRequest, error) {
 	dec := json.NewDecoder(r.Body)
 	var p models.PriceRequest
 	err := dec.Decode(&p)
