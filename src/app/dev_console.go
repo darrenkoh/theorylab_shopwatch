@@ -26,6 +26,11 @@ func main() {
 	//url := "https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149"
 	//url := "https://www.bestbuy.com/site/apple-iphone-12-5g-64gb-black-verizon/6009897.p?skuId=6009897"
 	url := "https://www.walmart.com/ip/Echelon-Connect-Sport-Indoor-Cycling-Exercise-Bike-with-6-Month-Free-Membership-120-value/533034706"
+	//url := "https://www.walmart.com/ip/LEGO-Star-Wars-A-wing-Starfighter-75275-Building-Toy-Cool-Gift-Idea-for-Creative-Adults-1-673-Pieces/554462454"
+	//url := "https://www.amazon.com/dp/B07XJ8C8F7"
+	//url := "https://www.amazon.com/dp/B076PRWVFG"
+	//url := "https://www.amazon.com/PULSE-3D-Wireless-Headset-PlayStation-5/dp/B08FC6QLKN"
+	//url := "https://www.newegg.com/grey-with-blue-diamond-cut-msi-prestige-15-a10sc-296-mainstream/p/N82E16834155448?Item=N82E16834155448"
 
 	p, err := parser.GetProductInfo(url)
 	if p != nil && err == nil {

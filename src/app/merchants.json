@@ -7,10 +7,17 @@
                 "img": {
                     "path": "//img[@data-selenium='inlineMediaMainImage']"
                 },
-                "available": "//span[@data-selenium='stockStatus']/text()",
-                "price": ["//div[@data-selenium='pricingPrice']/text()"]
-            },
-            "availablekeyword": "in stock"
+                "available": [
+                    {
+                        "path": "//span[@data-selenium='stockStatus']/text()",
+                        "keyword": "in stock",
+                        "operator": "equal"
+                    }
+                ],
+                "price": [
+                    "//div[@data-selenium='pricingPrice']/text()"
+                ]
+            }
         },
         {
             "name": "bestbuy",
@@ -19,13 +26,23 @@
                 "img": {
                     "path": "//img[@class='primary-image']"
                 },
-                "available": "//div[@class='fulfillment-add-to-cart-button']/div/div/button/text()",
+                "available": [
+                    {
+                        "path": "/html/body/div[3]/main/div[2]/div[5]/div/div[5]/script/text()",
+                        "keyword": "\"availability\":\"http://schema.org/InStock\"",
+                        "operator": "contain"
+                    },
+                    {
+                        "path": "//div[@class='fulfillment-add-to-cart-button']/div/div/button/text()",
+                        "keyword": "add to cart",
+                        "operator": "equal"
+                    }
+                ],
                 "price": [
                     "//div[@class='priceView-hero-price priceView-customer-price']/span/text()",
                     "//button[@class='activated-pricing__button ']/span[@class='activated-pricing__option-price']/span/text()"
                 ]
-            },
-            "availablekeyword": "add to cart"
+            }
         },
         {
             "name": "walmart",
@@ -33,29 +50,57 @@
                 "productname": "//h1[@class='prod-ProductTitle prod-productTitle-buyBox font-bold']/text()",
                 "img": {
                     "path": "//img[@class='hover-zoom-hero-image']",
-                    "transformeval": "\"https://\" + trim(split(s, \"?\")[0], \"/\")" 
+                    "transformeval": "\"https://\" + trim(split(s, \"?\")[0], \"/\")"
                 },
-                "available": "//span[@class='spin-button-children']",
-                "price": ["//span[@class='price-characteristic']/text()"]
-            },
-            "availablekeyword": "add to cart"
+                "available": [
+                    {
+                        "path": "//button[@class='button prod-ProductCTA--primary prod-ProductCTA--server display-inline-block button--primary']/span[@class='button-wrapper']/text()",
+                        "keyword": "add to cart",
+                        "operator": "equal"
+                    }
+                ],
+                "price": [
+                    "//span[@class='price-characteristic']/text()"
+                ]
+            }
         },
         {
             "name": "amazon",
             "xpath": {
-                "productname": "",
-                "img": {},
-                "available": "",
-                "price": []
+                "productname": "//span[@id='productTitle']/text()",
+                "img": {
+                    "sourceattribute": "data-old-hires",
+                    "path": "//img[@id='landingImage']"
+                },
+                "available": [
+                    {
+                        "path": "//div[@id='availability']/span/text()",
+                        "keyword": "in stock",
+                        "operator": "equal"
+                    }
+                ],
+                "price": [
+                    "//span[@id='priceblock_ourprice']/text()"
+                ]
             }
         },
         {
             "name": "newegg",
             "xpath": {
-                "productname": "",
-                "img": {},
-                "available": "",
-                "price": []
+                "productname": "//h1[@class='product-title']/text()",
+                "img": {
+                    "path": "//img[@class='product-view-img-original']"
+                },
+                "available": [
+                    {
+                        "path": "//button[@class='btn btn-primary btn-wide']/text()",
+                        "keyword": "add to cart",
+                        "operator": "equal"
+                    }
+                ],
+                "price": [
+                    "//li[@class='price-current']/strong/text()"
+                ]
             }
         },
         {
@@ -63,7 +108,7 @@
             "xpath": {
                 "productname": "",
                 "img": {},
-                "available": "",
+                "available": [],
                 "price": []
             }
         },
@@ -72,7 +117,7 @@
             "xpath": {
                 "productname": "",
                 "img": {},
-                "available": "",
+                "available": [],
                 "price": []
             }
         }

@@ -16,30 +16,28 @@ import (
 	"golang.org/x/net/html"
 )
 
-// Config Structure
 type Config struct {
 	Merchants []Merchant `json:"merchant"`
 }
-
-// Img Structure
 type Img struct {
-	Path          string `json:"path"`
-	Transformeval string `json:"transformeval"`
+	SourceAttribute string `json:"sourceattribute"`
+	Path            string `json:"path"`
+	Transformeval   string `json:"transformeval"`
 }
-
-// Xpath Structure
+type Available struct {
+	Path     string `json:"path"`
+	Keyword  string `json:"keyword"`
+	Operator string `json:"operator"`
+}
 type Xpath struct {
-	ProductName string   `json:"productname"`
-	Img         Img      `json:"img"`
-	Available   string   `json:"available"`
-	Price       []string `json:"price"`
+	Productname string      `json:"productname"`
+	Img         Img         `json:"img"`
+	Available   []Available `json:"available"`
+	Price       []string    `json:"price"`
 }
-
-// Merchant Structure
 type Merchant struct {
-	Name             string `json:"name"`
-	Xpath            Xpath  `json:"xpath"`
-	AvailableKeyword string `json:"availablekeyword,omitempty"`
+	Name  string `json:"name"`
+	Xpath Xpath  `json:"xpath"`
 }
 
 // Product Structure
@@ -139,9 +137,19 @@ func getPrice(price string) float64 {
 	return -1
 }
 
-func getAvailability(available string, config Merchant) string {
-	if strings.Contains(strings.ToLower(available), strings.ToLower(config.AvailableKeyword)) {
-		return "Yes"
+func getAvailability(available string, config Available) string {
+	source := strings.Trim(strings.TrimSpace(available), ".")
+	if config.Operator == "equal" {
+		if strings.ToLower(source) == strings.ToLower(config.Keyword) {
+			return "Yes"
+		}
+		return "No"
+
+	} else if config.Operator == "contain" {
+		if strings.Contains(strings.ToLower(source), strings.ToLower(config.Keyword)) {
+			return "Yes"
+		}
+		return "No"
 	}
 	return "No"
 }
@@ -187,12 +195,12 @@ func GetProductInfo(url string) (info *Product, err error) {
 	}
 
 	// Product Name
-	prodName, err := htmlquery.Query(doc, merchantConfig.Xpath.ProductName)
+	prodName, err := htmlquery.Query(doc, merchantConfig.Xpath.Productname)
 	if err != nil {
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
 	}
-	product.Name = prodName.Data
+	product.Name = strings.TrimSpace(prodName.Data)
 
 	// Download the Image
 	node, err := htmlquery.Query(doc, merchantConfig.Xpath.Img.Path)
@@ -200,19 +208,26 @@ func GetProductInfo(url string) (info *Product, err error) {
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
 	}
-	imgURL := getAttr("src", node.Attr)
+	srcattribute := "src"
+	if len(merchantConfig.Xpath.Img.SourceAttribute) > 0 {
+		srcattribute = merchantConfig.Xpath.Img.SourceAttribute
+	}
+
+	imgURL := getAttr(srcattribute, node.Attr)
 	img, err := getImg(imgURL, merchantConfig.Xpath.Img.Transformeval)
 	product.Img = img
 
 	// Stock Available
-	product.Available = "Yes"
-	stock, err := htmlquery.Query(doc, merchantConfig.Xpath.Available)
-	if err != nil {
-		fmt.Printf("Invalid Xpath: %v", err)
-		return nil, err
-	}
-	if stock != nil {
-		product.Available = getAvailability(stock.Data, merchantConfig)
+	product.Available = "No"
+	for _, a := range merchantConfig.Xpath.Available {
+		stock, err := htmlquery.Query(doc, a.Path)
+		if err != nil {
+			fmt.Printf("Invalid Xpath: %v", err)
+			return nil, err
+		}
+		if stock != nil {
+			product.Available = getAvailability(stock.Data, a)
+		}
 	}
 
 	// Get the price

@@ -17,6 +17,42 @@ func init() {
 	LoadConfig(merchantJSON)
 }
 
+func validate(t *testing.T, urls []dict, merchanName string) {
+	for _, url := range urls {
+		p, err := GetProductInfo(url["url"].(string))
+		if err != nil {
+			t.Errorf("%s: We got error for Url: %s\n, Error is %v", merchanName, url["url"], err)
+		} else if p == nil {
+			t.Errorf("%s: We got nil object for Url: %s", merchanName, url["url"])
+		}
+
+		hasPrice := len(p.Price) > 0
+		expectPrice := url["expectprice"].(bool)
+		if (hasPrice && !expectPrice) ||
+			(!hasPrice && expectPrice) {
+			t.Errorf("%s: wrong price expectation (hasPrice=%v vs expected=%v) for Url: %s", merchanName, hasPrice, expectPrice, url["url"])
+		}
+
+		isAvailable := p.Available == "Yes"
+		expectAvailable := url["instock"].(bool)
+		if (isAvailable && !expectAvailable) ||
+			(!isAvailable && expectAvailable) {
+			t.Errorf("%s: wrong in stock expection (isAvailable=%v vs expectAvailable=%v) for Url: %s", merchanName, isAvailable, expectAvailable, url["url"])
+		}
+
+		if len(p.Img) == 0 {
+			t.Errorf("%s: we are not getting any image for Url: %s", merchanName, url["url"])
+		}
+
+		if len(p.Name) == 0 {
+			t.Errorf("%s: we are not getting any name for Url: %s", merchanName, url["url"])
+		}
+		print(".")
+		time.Sleep(2000 * time.Millisecond)
+	}
+	println("Done")
+}
+
 func TestBhPhoto(t *testing.T) {
 	urls := []dict{
 		{
@@ -27,12 +63,12 @@ func TestBhPhoto(t *testing.T) {
 		{
 			"url":         "https://www.bhphotovideo.com/c/product/1600080-REG/microsoft_rrt_00001_xbox_series_x_1tb.html",
 			"expectprice": false,
-			"instock":     true,
+			"instock":     false,
 		},
 		{
 			"url":         "https://www.bhphotovideo.com/c/product/1543054-REG/elmo_1430_mx_p2_visual_presenter_and.html",
 			"expectprice": true,
-			"instock":     true,
+			"instock":     false,
 		},
 		{
 			"url":         "https://www.bhphotovideo.com/c/product/1555040-REG/lg_50un7300puf_un7300_50_class_hdr.html",
@@ -42,42 +78,15 @@ func TestBhPhoto(t *testing.T) {
 		{
 			"url":         "https://www.bhphotovideo.com/c/product/1604841-REG/apple_z125_mgn7_05_bh_13_3_macbook_air_with.html",
 			"expectprice": true,
-			"instock":     true,
+			"instock":     false,
 		},
 	}
 
-	print("Testing Bhphoto...")
-	for _, url := range urls {
-		p, err := GetProductInfo(url["url"].(string))
-		if err != nil {
-			t.Errorf("BhPhoto: We got error for Url: %s\n, Error is %v", url, err)
-		} else if p == nil {
-			t.Errorf("BhPhoto: We got nil object for Url: %s", url)
-		}
-
-		if len(p.Price) == 0 && url["expectprice"].(bool) {
-			t.Errorf("BhPhoto: we are not getting any price for Url: %s", url)
-		}
-
-		if len(p.Available) == 0 && url["instock"].(bool) {
-			t.Errorf("BhPhoto: we are not getting any available for Url: %s", url)
-		}
-
-		if len(p.Img) == 0 {
-			t.Errorf("BhPhoto: we are not getting any image for Url: %s", url)
-		}
-
-		if len(p.Name) == 0 {
-			t.Errorf("BhPhoto: we are not getting any name for Url: %s", url)
-		}
-		print(".")
-		time.Sleep(2000 * time.Millisecond)
-	}
-	println("Done")
+	print("Testing Bhphoto")
+	validate(t, urls, "Bhphoto")
 }
 
 func TestBestbuy(t *testing.T) {
-	merchanName := "Bestbuy"
 	urls := []dict{
 		{
 			"url":         "https://www.bestbuy.com/site/apple-airpods-with-charging-case-latest-model-white/6084400.p?skuId=6084400",
@@ -96,33 +105,75 @@ func TestBestbuy(t *testing.T) {
 		},
 	}
 
-	fmt.Printf("Testing %s...", merchanName)
+	print("Testing BestBuy")
+	validate(t, urls, "BestBuy")
+}
 
-	for _, url := range urls {
-		p, err := GetProductInfo(url["url"].(string))
-		if err != nil {
-			t.Errorf("%s: We got error for Url: %s\n, Error is %v", merchanName, url, err)
-		} else if p == nil {
-			t.Errorf("%s: We got nil object for Url: %s", merchanName, url)
-		}
-
-		if len(p.Price) == 0 && url["expectprice"].(bool) {
-			t.Errorf("%s: we are not getting any price for Url: %s", merchanName, url)
-		}
-
-		if len(p.Available) == 0 && url["instock"].(bool) {
-			t.Errorf("%s: we are not getting any available for Url: %s", merchanName, url)
-		}
-
-		if len(p.Img) == 0 {
-			t.Errorf("%s: we are not getting any image for Url: %s", merchanName, url)
-		}
-
-		if len(p.Name) == 0 {
-			t.Errorf("%s: we are not getting any name for Url: %s", merchanName, url)
-		}
-		print(".")
-		time.Sleep(2000 * time.Millisecond)
+func TestWalmart(t *testing.T) {
+	urls := []dict{
+		{
+			"url":         "https://www.walmart.com/ip/Echelon-Connect-Sport-Indoor-Cycling-Exercise-Bike-with-6-Month-Free-Membership-120-value/533034706",
+			"expectprice": true,
+			"instock":     true,
+		},
+		{
+			"url":         "https://www.walmart.com/ip/LEGO-Star-Wars-A-wing-Starfighter-75275-Building-Toy-Cool-Gift-Idea-for-Creative-Adults-1-673-Pieces/554462454",
+			"expectprice": true,
+			"instock":     true,
+		},
+		{
+			"url":         "https://www.walmart.com/ip/seort/360463987",
+			"expectprice": true,
+			"instock":     false,
+		},
 	}
-	println("Done")
+
+	print("Testing Walmart")
+	validate(t, urls, "Walmart")
+}
+
+func TestAmazon(t *testing.T) {
+	urls := []dict{
+		{
+			"url":         "https://www.amazon.com/dp/B07XJ8C8F7",
+			"expectprice": true,
+			"instock":     false,
+		},
+		{
+			"url":         "https://www.amazon.com/dp/B076PRWVFG",
+			"expectprice": true,
+			"instock":     true,
+		},
+		{
+			"url":         "https://www.amazon.com/PULSE-3D-Wireless-Headset-PlayStation-5/dp/B08FC6QLKN",
+			"expectprice": true,
+			"instock":     false,
+		},
+	}
+
+	print("Testing Amazon")
+	validate(t, urls, "Amazon")
+}
+
+func TestNewegg(t *testing.T) {
+	urls := []dict{
+		{
+			"url":         "https://www.newegg.com/grey-with-blue-diamond-cut-msi-prestige-15-a10sc-296-mainstream/p/N82E16834155448?Item=N82E16834155448",
+			"expectprice": true,
+			"instock":     true,
+		},
+		{
+			"url":         "https://www.newegg.com/p/N82E16868110292",
+			"expectprice": true,
+			"instock":     false,
+		},
+		{
+			"url":         "https://www.newegg.com/msi-geforce-rtx-2070-super-rtx-2070-super-gaming-x-trio/p/N82E16814137439",
+			"expectprice": true,
+			"instock":     true,
+		},
+	}
+
+	print("Testing Newegg")
+	validate(t, urls, "Newegg")
 }
