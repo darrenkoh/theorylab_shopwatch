@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// RegisterControllers method registers all controllers will be used for the webservice
 func RegisterControllers() {
 	pr := newPriceRequestController()
 
