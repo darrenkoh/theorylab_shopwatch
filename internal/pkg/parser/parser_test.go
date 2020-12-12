@@ -146,7 +146,7 @@ func TestAmazon(t *testing.T) {
 		},
 		{
 			"url":         "https://www.amazon.com/PULSE-3D-Wireless-Headset-PlayStation-5/dp/B08FC6QLKN",
-			"expectprice": true,
+			"expectprice": false,
 			"instock":     false,
 		},
 	}

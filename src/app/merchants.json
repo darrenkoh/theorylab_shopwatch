@@ -106,10 +106,25 @@
         {
             "name": "adorama",
             "xpath": {
-                "productname": "",
-                "img": {},
-                "available": [],
-                "price": []
+                "productname": "//title/text()",
+                "img": {
+                    "sourceattribute": "data-src",
+                    "path": "//img[@class='largeImage productImage']"
+                },
+                "available": [
+                    {
+                        "path": "//div[@class='buy-section purchase']/button/text()",
+                        "operator": "equal",
+                        "keyword": "add to cart"
+                    }
+                ],
+                "price": [
+                    "//strong[@class='your-price']/text()"
+                ]
+            },
+            "request_header_overwrite": {
+                "cookie": "akCountry=US; sterm=CjwKCAiAn7L-BRBbEiwAl9UtkAZ5QGcv4Kb5CFxwXAhF6EXdozX20aBfJ2wgqSVCYChF630yCPezChoCwSMQAvD_BwE; AJAXrefby=nmpi-google-brand; refby=nmpi-google-brand; header_refby=nmpi-google-brand; _adlClkID=CjwKCAiAn7L-BRBbEiwAl9UtkAZ5QGcv4Kb5CFxwXAhF6EXdozX20aBfJ2wgqSVCYChF630yCPezChoCwSMQAvD_BwE; _gac_UA-30760-1=1.1607321032.CjwKCAiAn7L-BRBbEiwAl9UtkAZ5QGcv4Kb5CFxwXAhF6EXdozX20aBfJ2wgqSVCYChF630yCPezChoCwSMQAvD_BwE; sid3=d4dbfc47-473c-4f19-9ae0-e34c39d41ccf; js_sid=1; lastPrtcl=https%3A; PUID=d4dbfc47-473c-4f19-9ae0-e34c39d41ccf; Session_Refby=; Session_Refby_Processed=nmpi-google-brand; _evga_c81d={%22uuid%22:%2270ab263afaae4822%22}; _pxvid=fc28e044-3851-11eb-9300-0242ac120011; _gcl_aw=GCL.1607321035.CjwKCAiAn7L-BRBbEiwAl9UtkAZ5QGcv4Kb5CFxwXAhF6EXdozX20aBfJ2wgqSVCYChF630yCPezChoCwSMQAvD_BwE; _gcl_dc=GCL.1607321035.CjwKCAiAn7L-BRBbEiwAl9UtkAZ5QGcv4Kb5CFxwXAhF6EXdozX20aBfJ2wgqSVCYChF630yCPezChoCwSMQAvD_BwE; _gcl_au=1.1.1331302249.1607321035; _fbp=fb.1.1607321035402.1948433413; _vz=viz_5fcdc5cbf4147; dtm_token=AQEIuuXJgh81vgFLlBrFAQHyQgE; IR_gbd=adorama.com; _pin_unauth=dWlkPVpUWTNOR1UwT1RBdFlUa3pZaTAwTUdaaUxUbGxZbVF0WXpOa09EQTFOelpsTXpZNQ; __ruid=113083348-8w-hw-41-1p-imkkj2c0z9d1wtwwpwy4-1607321037356; __rcmp=0!bj1fZ2MsZj1nYyxzPTAsYz0xOTY5LHRyPTAscm49MzcsdHM9MjAyMDEyMDcuMDYwMyxkPXBjO249c2IxLGY9c2Iscz0wLGM9MTI5Nix0PTIwMTcwNzMxLjE4MzQ~; _gac_UA-307060-1=1.1607321037.CjwKCAiAn7L-BRBbEiwAl9UtkAZ5QGcv4Kb5CFxwXAhF6EXdozX20aBfJ2wgqSVCYChF630yCPezChoCwSMQAvD_BwE; _svsid=60348427b7c5cd53434fc65e97d5337f; visitor_id416222=924049643; visitor_id416222-hash=febd6251a08ae5f8c72c603a82378c951bec3e26e61cb37062233a51473f761427848e258d014006815a3faf76326209ce343b9b; _gid=GA1.2.940526174.1607727293; IsLoggedIn=False; adivparam=adnh-f_isVip-f_isLoggedIn-f; VipCustomer=F; isVip360=F; Adorama_ABTestingFlag=076; wpn_https={\"last_shown\":\"Fri, 11 Dec 2020 22:54:53 GMT\",\"shown_count\":1}; IR_PI=fddce25b-3851-11eb-b7b6-061ec55953b4%7C1607813693831; usi_launched=t1607727296717; g_state={\"i_p\":1607734499454,\"i_l\":1}; viz_sent=1; usi_prod_pic_1=https%253A%252F%252Fwww.adorama.com%252Fimages%252FLarge%252Ftf77vnd.jpg; usi_prod_name_1=77mm%2520Variable%2520Neutral%2520Density%2520(ND)%2520Filter%2520-%25202%2520to%25208; usi_prod_price_1=89.95; fastly-io=1; SSID=CAA4MR04AAAAAADFxc1f0SYCAsXFzV8DAAAAAAAAAAAAiAXUXwDo-Dp4AAOeMw4AxcXNXwMAYMkAAWeuGwCIBdRfAQDK4gADEPofAG34018CACTlAAMDMiAAxcXNXwMA; SSSC=500.G6903391253761763025.3|30778.930718:51552.1814119:58058.2095632:58660.2109955; activeUser=1; maId={\"cid\":\"3e61600b06ab89661403b14217e612ca\",\"sid\":\"13c14bde-1252-4475-82d9-5032e24858c0\",\"isSidSaved\":true,\"sessionStart\":\"2020-12-11T23:49:30.000Z\"}; __rutmb=113083348; ShowMap=0|0|0|0; usi_prod_pic_2=https%253A%252F%252Fwww.adorama.com%252Fimages%252FLarge%252Fnolpminimk2.jpg; usi_prod_name_2=Launchpad%2520Mini%2520MK2%2520Ableton%2520Live%2520Controller; usi_prod_price_2=99.99; SSRT=3wXUXwADAA; InvisibleParameter=priceMode%3D0%7C0%7C0%7C0%7C0%26pagePriceMode%3D0%7C0%7C0%7C0%7C0%26country%3DUS%26productVersion%3D1561%26perPage%3D25%26sort%3D%26descSort%3D%26isVip%3Dfalse%26isSRLoggedIn%3Dfalse%26isVip360%3Dfalse%26isLoggedIn%3Dfalse%26mode%3D%26isFreeShipPromo%3Dfalse%26clientUtcOffset%3D-8%26bankId%3D1; needlepin=N190d160772733655434f300121481388b8e881388c58c81388c5e1001100000000000001281388c58c0000000009sliderMin01281388c58c00000; usi_prod_pic_3=https%253A%252F%252Fwww.adorama.com%252Fimages%252FLarge%252Fnolpminimk2.jpg; usi_prod_name_3=Launchpad%2520Mini%2520MK2%2520Ableton%2520Live%2520Controller; usi_prod_price_3=99.99; InvisibleParameterChanger=ClientUtcOffset%3D-8; _br_uid_2=uid%3D3419701030690%3Av%3D15.0%3Ats%3D1607321036358%3Ahc%3D9; sub-website=; _ga_L14X51CYC0=GS1.1.1607730570.3.1.1607730669.0; a=b; _uetsid=e19409503c0311eb895e4d74d98cac44; _uetvid=fccedca0385111ebb0ac9f60d80e30ba; sailthru_pageviews=5; IR_1036=1607730669877%7C0%7C1607730571782%7C%7C; mp_adorama_mixpanel=%7B%22distinct_id%22%3A%20%221763bcca7a9521-09e0de24e4b95a-16144b58-1ea000-1763bcca7aa9e1%22%2C%22bc_persist_updated%22%3A%201607321036715%7D; sailthru_content=a8cd168cee98e45a90f07bdeacd978fa377dc113561f743211fea5f947c56b679eefda42070d9a86e87e4970530ec0891dc1ef45ccb09b3ef8a5e0236b6f849f4fcece9803003ebcc829c9d69431afb3de0034ab409fa140e12eb0ff4fa29c1d8941a535b891eafa2940ba706d3ebb29e8714700bba03f6677a758657df3a8f6; sailthru_visitor=d3621802-803d-4a25-9502-974a0640167b; __rutma=113083348-8w-hw-41-1p-imkkj2c0z9d1wtwwpwy4-1607321037356.1607727294611.1607730572201.3.10.5; __rpck=0!eyJwcm8iOiJodHRwczovL3d3dy5nb29nbGUuY29tLyIsImJ0Ijp7IjAiOmZhbHNlLCIxIjpudWxsLCIyIjoxNjM4MCwiMyI6MC43Nn0sIkMiOnt9LCJOIjp7fX0~; _ga=GA1.2.75624965.1607321032; __rpckx=0!eyJ0NyI6eyIxMCI6MTYwNzczMDY3MDYwNX0sInQ3diI6eyIxMCI6MTYwNzczMDc5MDY3OX0sIml0aW1lIjoiMjAyMDEyMTEuMjM0OSJ9; _px2=eyJ1IjoiYmUwODNkOTAtM2MwYi0xMWViLWE5MDctYTU4YjU2ZGJhYTg1IiwidiI6ImZjMjhlMDQ0LTM4NTEtMTFlYi05MzAwLTAyNDJhYzEyMDAxMSIsInQiOjE2MDc3MzA5MTI3NjMsImgiOiI4ZTU4MDU5Yjc4NjRlYzQ5NTMxNWRjZDk0MWNkMDYzMmM1OTM4MmM2NzEyMGFhYWUyNTc2M2QyOTViZjgwNGZlIn0="
+
             }
         },
         {

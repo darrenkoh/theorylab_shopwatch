@@ -20,7 +20,7 @@ type Config struct {
 	Merchants []Merchant `json:"merchant"`
 }
 type Img struct {
-	SourceAttribute string `json:"sourceattribute"`
+	SourceAttribute string `json:sourceattribute`
 	Path            string `json:"path"`
 	Transformeval   string `json:"transformeval"`
 }
@@ -35,9 +35,13 @@ type Xpath struct {
 	Available   []Available `json:"available"`
 	Price       []string    `json:"price"`
 }
+type RequestHeaderOverwrite struct {
+	Cookie string `json:"cookie"`
+}
 type Merchant struct {
-	Name  string `json:"name"`
-	Xpath Xpath  `json:"xpath"`
+	Name                   string                 `json:"name"`
+	Xpath                  Xpath                  `json:"xpath"`
+	RequestHeaderOverwrite RequestHeaderOverwrite `json:"request_header_overwrite"`
 }
 
 // Product Structure
@@ -172,7 +176,20 @@ func GetProductInfo(url string) (info *Product, err error) {
 		Timeout: 30 * time.Second,
 	}
 	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", "PostmanRuntime/7.26.5")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
+	req.Header.Set("Referer", "https://www.google.com")
+	req.Header.Set("accept-language", "en-US,en;q=0.9")
+	req.Header.Set("cache-control", "max-age=0")
+	req.Header.Set("sec-fetch-dest", "document")
+	req.Header.Set("sec-fetch-mode", "navigate")
+	req.Header.Set("sec-fetch-site", "same-origin")
+	req.Header.Set("sec-fetch-user", "?1")
+	req.Header.Set("upgrade-insecure-requests", "1")
+
+	if len(merchantConfig.RequestHeaderOverwrite.Cookie) > 0 {
+		req.Header.Set("cookie", merchantConfig.RequestHeaderOverwrite.Cookie)
+	}
+
 	response, err := client.Do(req)
 
 	if err != nil {
@@ -187,7 +204,8 @@ func GetProductInfo(url string) (info *Product, err error) {
 		return nil, err
 	}
 	/* Write to temp for testing */
-	//ioutil.WriteFile("test.html", data, 0644)
+	ioutil.WriteFile("test.html", data, 0644)
+
 	docReader := bytes.NewReader(data)
 	doc, err := htmlquery.Parse(docReader)
 	if err != nil {
