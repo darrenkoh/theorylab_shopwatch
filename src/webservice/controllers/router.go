@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -9,7 +10,10 @@ import (
 // RegisterControllers method registers all controllers will be used for the webservice
 func RegisterControllers() {
 	pr := newPriceRequestController()
-
+	initOk, err := pr.init()
+	if err != nil || !initOk {
+		panic(fmt.Errorf("Initialized error %v", err))
+	}
 	http.Handle("/pricerequests", *pr)
 	http.Handle("/pricerequests/", *pr)
 }
