@@ -31,7 +31,9 @@ func main() {
 	//url := "https://www.amazon.com/dp/B076PRWVFG"
 	//url := "https://www.amazon.com/PULSE-3D-Wireless-Headset-PlayStation-5/dp/B08FC6QLKN"
 	//url := "https://www.newegg.com/grey-with-blue-diamond-cut-msi-prestige-15-a10sc-296-mainstream/p/N82E16834155448?Item=N82E16834155448"
-	url := "https://www.adorama.com/nolpminimk2.html"
+	//url := "https://www.adorama.com/nolpminimk2.html"
+	//url := "https://www.adorama.com/icalpe6nh.html"
+	url := "https://www.etsy.com/listing/505391661/cat-beginner-diy-felting-kit-wool-felt?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-4&plkey=8a8b101dcb15ca341ee1b9e9f5fb528119e7b7d6%3A505391661&frs=1&bes=1"
 
 	p, err := parser.GetProductInfo(url)
 	if p != nil && err == nil {

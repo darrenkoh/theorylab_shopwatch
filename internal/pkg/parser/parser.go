@@ -129,13 +129,18 @@ func getImg(url string, transformeval string) (img []byte, err error) {
 }
 
 func getPrice(price string) float64 {
+	price = strings.TrimSpace(price)
 	prc := regexp.MustCompile("[$]").Split(price, 2)
 	if prc != nil {
 		idx := 1
 		if len(prc) == 1 {
 			idx = 0
 		}
-		f, _ := strconv.ParseFloat(strings.Replace(prc[idx], ",", "", -1), 64)
+		t := prc[idx]
+		for _, x := range [3]string{",", "+"} {
+			t = strings.Replace(t, x, "", -1)
+		}
+		f, _ := strconv.ParseFloat(t, 64)
 		return f
 	}
 	return -1

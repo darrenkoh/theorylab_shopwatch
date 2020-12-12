@@ -177,3 +177,39 @@ func TestNewegg(t *testing.T) {
 	print("Testing Newegg")
 	validate(t, urls, "Newegg")
 }
+
+func TestAdorama(t *testing.T) {
+	urls := []dict{
+		{
+			"url":         "https://www.adorama.com/nolpminimk2.html",
+			"expectprice": true,
+			"instock":     true,
+		},
+		{
+			"url":         "https://www.adorama.com/icalpe6nh.html",
+			"expectprice": true,
+			"instock":     true,
+		},
+	}
+
+	print("Testing Adorama")
+	validate(t, urls, "Adorama")
+}
+
+func TestEtsy(t *testing.T) {
+	urls := []dict{
+		{
+			"url":         "https://www.etsy.com/listing/505391661/cat-beginner-diy-felting-kit-wool-felt?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-4&plkey=8a8b101dcb15ca341ee1b9e9f5fb528119e7b7d6%3A505391661&frs=1&bes=1",
+			"expectprice": true,
+			"instock":     true,
+		},
+		{
+			"url":         "https://www.etsy.com/listing/504195172/funny-stickers-dont-be-a-prick-cactus?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-1-5&frs=1&bes=1",
+			"expectprice": true,
+			"instock":     true,
+		},
+	}
+
+	print("Testing Etsy")
+	validate(t, urls, "Etsy")
+}
