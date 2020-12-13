@@ -75,7 +75,7 @@ func (pr *PriceRequestController) processRequest(w http.ResponseWriter, r *http.
 		return
 	}
 
-	if len(p.Url) == 0 {
+	if len(p.URL) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("No Url to request price"))
 		return
@@ -87,7 +87,7 @@ func (pr *PriceRequestController) processRequest(w http.ResponseWriter, r *http.
 		return
 	}
 
-	productInfoPtr, err := parser.GetProductInfo(p.Url)
+	productInfoPtr, err := parser.GetProductInfoByURL(p.URL)
 
 	// for testing
 	//var productInfo parser.Product
