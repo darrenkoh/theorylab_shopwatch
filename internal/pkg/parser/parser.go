@@ -20,7 +20,7 @@ type Config struct {
 	Merchants []Merchant `json:"merchant"`
 }
 type Img struct {
-	SourceAttribute string `json:sourceattribute`
+	SourceAttribute string `json:"sourceattribute"`
 	Path            string `json:"path"`
 	Transformeval   string `json:"transformeval"`
 }
@@ -163,9 +163,7 @@ func getAvailability(available string, config Available) string {
 	return "No"
 }
 
-// GetProductInfo load url and return Product
-func GetProductInfo(url string) (info *Product, err error) {
-
+func getMerchantFromURL(url string) (merchant *Merchant) {
 	// Detect Merchan
 	merchantConfig := config.Merchants[0]
 	for _, m := range config.Merchants {
@@ -174,8 +172,13 @@ func GetProductInfo(url string) (info *Product, err error) {
 			break
 		}
 	}
+	return &merchantConfig
+}
 
-	var product Product
+// GetProductInfoByURL load url and return Product
+func GetProductInfoByURL(url string) (info *Product, err error) {
+
+	merchantConfig := getMerchantFromURL(url)
 
 	client := &http.Client{
 		Timeout: 30 * time.Second,
@@ -203,15 +206,23 @@ func GetProductInfo(url string) (info *Product, err error) {
 	defer response.Body.Close()
 	data, err := ioutil.ReadAll(response.Body)
 
-	product.HTMLBody = string(data)
-
 	if err != nil {
 		return nil, err
 	}
+	html := string(data)
+
 	/* Write to temp for testing */
 	ioutil.WriteFile("test.html", data, 0644)
 
-	docReader := bytes.NewReader(data)
+	return GetProductInfoByHTML(html, merchantConfig)
+}
+
+// GetProductInfoByHTML parse html content and return Product
+func GetProductInfoByHTML(html string, merchantConfig *Merchant) (info *Product, err error) {
+
+	product := Product{HTMLBody: html}
+
+	docReader := bytes.NewReader([]byte(html))
 	doc, err := htmlquery.Parse(docReader)
 	if err != nil {
 		return nil, err

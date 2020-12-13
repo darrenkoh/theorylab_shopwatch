@@ -7,10 +7,10 @@ import (
 )
 
 type PriceRequest struct {
-	Url      string `json: "Url"`
-	MinPrice int    `json: "Minprice"`
-	MaxPrice int    `json: "Maxprice"`
-	User     string `json: "User"`
+	URL      string `json:"Url"`
+	MinPrice int    `json:"Minprice"`
+	MaxPrice int    `json:"Maxprice"`
+	User     string `json:"User"`
 }
 
 func AddPriceRequest(p PriceRequest, prod *ProductInfo) (int, error) {

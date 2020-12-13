@@ -35,7 +35,7 @@ func main() {
 	//url := "https://www.adorama.com/icalpe6nh.html"
 	url := "https://www.etsy.com/listing/505391661/cat-beginner-diy-felting-kit-wool-felt?ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sc_gallery-1-4&plkey=8a8b101dcb15ca341ee1b9e9f5fb528119e7b7d6%3A505391661&frs=1&bes=1"
 
-	p, err := parser.GetProductInfo(url)
+	p, err := parser.GetProductInfoByURL(url)
 	if p != nil && err == nil {
 		fmt.Printf("Name: %s\n", p.Name)
 		fmt.Printf("Price: %v\n", p.Price)
