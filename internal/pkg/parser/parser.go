@@ -2,9 +2,11 @@ package parser
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -13,6 +15,11 @@ import (
 
 	"github.com/antchfx/htmlquery"
 	"github.com/antonmedv/expr"
+	"github.com/chromedp/cdproto/cdp"
+	"github.com/chromedp/cdproto/dom"
+	"github.com/chromedp/cdproto/emulation"
+	"github.com/chromedp/cdproto/network"
+	"github.com/chromedp/chromedp"
 	"golang.org/x/net/html"
 )
 
@@ -42,6 +49,7 @@ type Merchant struct {
 	Name                   string                 `json:"name"`
 	Xpath                  Xpath                  `json:"xpath"`
 	RequestHeaderOverwrite RequestHeaderOverwrite `json:"request_header_overwrite"`
+	UseChromedp            bool                   `json:"usechromedp"`
 }
 
 // Product Structure
@@ -82,6 +90,95 @@ func getHTML(url string) (body string, err error) {
 		return "", fmt.Errorf("Read Body: %v", err)
 	}
 
+	return string(data), nil
+}
+
+func loadURLWithChromedp(url string, merchantConfig *Merchant) (body string, err error) {
+	html := ""
+
+	// create chrome instance
+	ctx, cancel := chromedp.NewContext(
+		context.Background(),
+		chromedp.WithLogf(log.Printf),
+	)
+	defer cancel()
+
+	// create a timeout
+	ctx, cancel = context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	//start := time.Now()
+	// navigate to a page, wait for an element, click
+	err = chromedp.Run(ctx,
+		emulation.SetUserAgentOverride("Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			if len(merchantConfig.RequestHeaderOverwrite.Cookie) > 0 {
+				println("setting cookie")
+				expr := cdp.TimeSinceEpoch(time.Now().Add(180 * 24 * time.Hour))
+				network.SetCookie("wfm_store_d8", "eyJpZCI6MTA1NDcsIm5hbWUiOiJEdWJsaW4gQ0EiLCJwYXRoIjoiZHVibGluLWNhIiwidGxjIjoiRFVOIn0=").WithDomain(".wholefoodsmarket.com").WithExpires(&expr).Do(ctx)
+			}
+			return nil
+		}),
+		chromedp.Navigate(url),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			node, err := dom.GetDocument().Do(ctx)
+			if err != nil {
+				return err
+			}
+			res, er := dom.GetOuterHTML().WithNodeID(node.NodeID).Do(ctx)
+			html = res
+			return er
+		}),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			cookies, err := network.GetAllCookies().Do(ctx)
+			if err != nil {
+				return err
+			}
+
+			for i, cookie := range cookies {
+				log.Printf("chrome cookie %d: %+v", i, cookie)
+			}
+
+			return nil
+		}),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//fmt.Printf("\nTook: %f secs\n", time.Since(start).Seconds())
+	return html, nil
+}
+
+func loadURL(url string, merchantConfig *Merchant) (body string, err error) {
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
+	req.Header.Set("Referer", "https://www.google.com")
+	req.Header.Set("accept-language", "en-US,en;q=0.9")
+	req.Header.Set("cache-control", "max-age=0")
+	req.Header.Set("sec-fetch-dest", "document")
+	req.Header.Set("sec-fetch-mode", "navigate")
+	req.Header.Set("sec-fetch-site", "same-origin")
+	req.Header.Set("sec-fetch-user", "?1")
+	req.Header.Set("upgrade-insecure-requests", "1")
+
+	if len(merchantConfig.RequestHeaderOverwrite.Cookie) > 0 {
+		req.Header.Set("cookie", merchantConfig.RequestHeaderOverwrite.Cookie)
+	}
+
+	response, err := client.Do(req)
+
+	if err != nil {
+		return "", err
+	}
+	defer response.Body.Close()
+	data, err := ioutil.ReadAll(response.Body)
+
+	if err != nil {
+		return "", err
+	}
 	return string(data), nil
 }
 
@@ -180,39 +277,15 @@ func GetProductInfoByURL(url string) (info *Product, err error) {
 
 	merchantConfig := getMerchantFromURL(url)
 
-	client := &http.Client{
-		Timeout: 30 * time.Second,
+	html := ""
+	if merchantConfig.UseChromedp {
+		html, err = loadURLWithChromedp(url, merchantConfig)
+	} else {
+		html, err = loadURL(url, merchantConfig)
 	}
-	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
-	req.Header.Set("Referer", "https://www.google.com")
-	req.Header.Set("accept-language", "en-US,en;q=0.9")
-	req.Header.Set("cache-control", "max-age=0")
-	req.Header.Set("sec-fetch-dest", "document")
-	req.Header.Set("sec-fetch-mode", "navigate")
-	req.Header.Set("sec-fetch-site", "same-origin")
-	req.Header.Set("sec-fetch-user", "?1")
-	req.Header.Set("upgrade-insecure-requests", "1")
-
-	if len(merchantConfig.RequestHeaderOverwrite.Cookie) > 0 {
-		req.Header.Set("cookie", merchantConfig.RequestHeaderOverwrite.Cookie)
-	}
-
-	response, err := client.Do(req)
-
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-	data, err := ioutil.ReadAll(response.Body)
-
-	if err != nil {
-		return nil, err
-	}
-	html := string(data)
 
 	/* Write to temp for testing */
-	ioutil.WriteFile("test.html", data, 0644)
+	ioutil.WriteFile("test.html", []byte(html), 0644)
 
 	return GetProductInfoByHTML(html, merchantConfig)
 }

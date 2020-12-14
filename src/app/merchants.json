@@ -133,14 +133,39 @@
                 "img": {
                     "path": "//img[@class='wt-max-width-full wt-horizontal-center wt-vertical-center carousel-image wt-rounded']"
                 },
-                "available": [{
-                    "path": "//button[@class='wt-btn wt-btn--filled wt-width-full']/div/text()",
-                    "operator": "equal",
-                    "keyword": "add to cart"
-                }],
+                "available": [
+                    {
+                        "path": "//button[@class='wt-btn wt-btn--filled wt-width-full']/div/text()",
+                        "operator": "equal",
+                        "keyword": "add to cart"
+                    }
+                ],
                 "price": [
                     "//p[@class='wt-text-title-03 wt-mr-xs-2']/text()"
                 ]
+            }
+        },
+        {
+            "name": "wholefoods",
+            "xpath": {
+                "productname": "//h1[@class='ProductHeader-Name--1ysBV']/text()",
+                "img": {
+                    "path": "//div[@class='ImagePreviewer-MainImage--1uzIM']/img"
+                },
+                "available": [
+                    {
+                        "path": "//div[@class='ProductHeader-Available--1hp_M']/text()",
+                        "operator": "contain",
+                        "keyword": "sold in"
+                    }
+                ],
+                "price": [
+                    "//div[@class='ProductHeader-Price--1gvWT']//span[2]/text()"
+                ]
+            },
+            "usechromedp": true,
+            "request_header_overwrite": {
+                "cookie": "wfm_store_d8=eyJpZCI6MTA1NDcsIm5hbWUiOiJEdWJsaW4gQ0EiLCJwYXRoIjoiZHVibGluLWNhIiwidGxjIjoiRFVOIn0="
             }
         }
     ]
