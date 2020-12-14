@@ -19,7 +19,7 @@ func init() {
 
 func validate(t *testing.T, urls []dict, merchanName string) {
 	for _, url := range urls {
-		p, err := GetProductInfo(url["url"].(string))
+		p, err := GetProductInfoByURL(url["url"].(string))
 		if err != nil {
 			t.Errorf("%s: We got error for Url: %s\n, Error is %v", merchanName, url["url"], err)
 		} else if p == nil {
@@ -119,7 +119,7 @@ func TestWalmart(t *testing.T) {
 		{
 			"url":         "https://www.walmart.com/ip/LEGO-Star-Wars-A-wing-Starfighter-75275-Building-Toy-Cool-Gift-Idea-for-Creative-Adults-1-673-Pieces/554462454",
 			"expectprice": true,
-			"instock":     true,
+			"instock":     false,
 		},
 		{
 			"url":         "https://www.walmart.com/ip/seort/360463987",
