@@ -43,7 +43,8 @@ type Xpath struct {
 	Price       []string    `json:"price"`
 }
 type RequestHeaderOverwrite struct {
-	Cookie string `json:"cookie"`
+	WithDomain string `json:"withdomain"`
+	Cookie     string `json:"cookie"`
 }
 type Merchant struct {
 	Name                   string                 `json:"name"`
@@ -97,15 +98,15 @@ func loadURLWithChromedp(url string, merchantConfig *Merchant) (body string, err
 	html := ""
 
 	// create chrome instance
-	ctx, cancel := chromedp.NewContext(
+	ctx, cancelctx := chromedp.NewContext(
 		context.Background(),
 		chromedp.WithLogf(log.Printf),
 	)
-	defer cancel()
+	defer cancelctx()
 
 	// create a timeout
-	ctx, cancel = context.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
+	ctx, canceltimeoutctx := context.WithTimeout(ctx, 10*time.Second)
+	defer canceltimeoutctx()
 
 	//start := time.Now()
 	// navigate to a page, wait for an element, click
@@ -115,7 +116,16 @@ func loadURLWithChromedp(url string, merchantConfig *Merchant) (body string, err
 			if len(merchantConfig.RequestHeaderOverwrite.Cookie) > 0 {
 				println("setting cookie")
 				expr := cdp.TimeSinceEpoch(time.Now().Add(180 * 24 * time.Hour))
-				network.SetCookie("wfm_store_d8", "eyJpZCI6MTA1NDcsIm5hbWUiOiJEdWJsaW4gQ0EiLCJwYXRoIjoiZHVibGluLWNhIiwidGxjIjoiRFVOIn0=").WithDomain(".wholefoodsmarket.com").WithExpires(&expr).Do(ctx)
+
+				for _, cookie := range strings.Split(merchantConfig.RequestHeaderOverwrite.Cookie, " ") {
+					kvp := strings.SplitN(cookie, "=", 2)
+					cookieParm := network.SetCookie(kvp[0], strings.TrimSuffix(kvp[1], ";"))
+					cookieParm.WithExpires(&expr)
+					if len(merchantConfig.RequestHeaderOverwrite.WithDomain) > 0 {
+						cookieParm.WithDomain(merchantConfig.RequestHeaderOverwrite.WithDomain)
+					}
+					cookieParm.Do(ctx)
+				}
 			}
 			return nil
 		}),

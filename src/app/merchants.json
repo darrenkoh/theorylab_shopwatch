@@ -12,6 +12,11 @@
                         "path": "//span[@data-selenium='stockStatus']/text()",
                         "keyword": "in stock",
                         "operator": "equal"
+                    },
+                    {
+                        "path": "//span[@data-selenium='stockStatus']/text()",
+                        "keyword": "special order",
+                        "operator": "equal"
                     }
                 ],
                 "price": [
@@ -165,7 +170,8 @@
             },
             "usechromedp": true,
             "request_header_overwrite": {
-                "cookie": "wfm_store_d8=eyJpZCI6MTA1NDcsIm5hbWUiOiJEdWJsaW4gQ0EiLCJwYXRoIjoiZHVibGluLWNhIiwidGxjIjoiRFVOIn0="
+                "withdomain": ".wholefoodsmarket.com",
+                "cookie": "wfm_store_d8=eyJpZCI6MTA1NDcsIm5hbWUiOiJEdWJsaW4gQ0EiLCJwYXRoIjoiZHVibGluLWNhIiwidGxjIjoiRFVOIn0=;"
             }
         }
     ]

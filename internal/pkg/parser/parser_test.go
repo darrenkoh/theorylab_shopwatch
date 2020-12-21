@@ -61,9 +61,9 @@ func TestBhPhoto(t *testing.T) {
 			"instock":     true,
 		},
 		{
-			"url":         "https://www.bhphotovideo.com/c/product/1600080-REG/microsoft_rrt_00001_xbox_series_x_1tb.html",
-			"expectprice": false,
-			"instock":     false,
+			"url":         "https://www.bhphotovideo.com/c/product/1344710-REG/asus_ph_gt1030_o2g_geforce_gt_1030_2gb.html",
+			"expectprice": true,
+			"instock":     true,
 		},
 		{
 			"url":         "https://www.bhphotovideo.com/c/product/1543054-REG/elmo_1430_mx_p2_visual_presenter_and.html",
