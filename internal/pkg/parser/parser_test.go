@@ -126,6 +126,11 @@ func TestWalmart(t *testing.T) {
 			"expectprice": true,
 			"instock":     false,
 		},
+		{
+			"url":         "https://www.walmart.com/ip/Jackery-SolarSaga-60W-Solar-Panel-Explorer-160-240-500-Portable-Generator-Foldable-Charger-Summer-Camping-Van-RV-Can-t-Charge-440-PowerPro/939780115?wmlspartner=wlpa&selectedSellerId=101019293",
+			"expectprice": true,
+			"instock":     true,
+		},
 	}
 
 	print("Testing Walmart")
@@ -149,6 +154,11 @@ func TestAmazon(t *testing.T) {
 			"expectprice": false,
 			"instock":     false,
 		},
+		{
+			"url":         "https://www.amazon.com/Jackery-SolarSaga-Portable-Explorer-Foldable/dp/B07Q71LX84/ref=redir_mobile_desktop?ie=UTF8&aaxitk=TV8Ms-qJfKXkDQYwn-NthQ&hsa_cr_id=3606977080801&ref_=sbx_be_s_sparkle_mcd_asin_1",
+			"expectprice": true,
+			"instock":     true,
+		},
 	}
 
 	print("Testing Amazon")
@@ -159,8 +169,8 @@ func TestNewegg(t *testing.T) {
 	urls := []dict{
 		{
 			"url":         "https://www.newegg.com/grey-with-blue-diamond-cut-msi-prestige-15-a10sc-296-mainstream/p/N82E16834155448?Item=N82E16834155448",
-			"expectprice": true,
-			"instock":     true,
+			"expectprice": false,
+			"instock":     false,
 		},
 		{
 			"url":         "https://www.newegg.com/p/N82E16868110292",

@@ -85,7 +85,8 @@
                     }
                 ],
                 "price": [
-                    "//span[@id='priceblock_ourprice']/text()"
+                    "//span[@id='priceblock_ourprice']/text()",
+                    "//span[@id='priceblock_dealprice']/text()"
                 ]
             }
         },

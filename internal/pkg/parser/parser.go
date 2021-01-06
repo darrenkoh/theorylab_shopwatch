@@ -317,7 +317,9 @@ func GetProductInfoByHTML(html string, merchantConfig *Merchant) (info *Product,
 		fmt.Printf("Invalid Xpath: %v", err)
 		return nil, err
 	}
-	product.Name = strings.TrimSpace(prodName.Data)
+	if prodName != nil {
+		product.Name = strings.TrimSpace(prodName.Data)
+	}
 
 	// Download the Image
 	node, err := htmlquery.Query(doc, merchantConfig.Xpath.Img.Path)
@@ -344,6 +346,9 @@ func GetProductInfoByHTML(html string, merchantConfig *Merchant) (info *Product,
 		}
 		if stock != nil {
 			product.Available = getAvailability(stock.Data, a)
+			if product.Available == "Yes" {
+				break
+			}
 		}
 	}
 
